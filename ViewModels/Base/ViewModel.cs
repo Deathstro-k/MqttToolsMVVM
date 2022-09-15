@@ -1,11 +1,14 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace MqttToolsMVVM.ViewModels.Base
 {
-    internal abstract class ViewModel : INotifyPropertyChanged
+    internal abstract class ViewModel : INotifyPropertyChanged,IDisposable
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+       
 
 
         /// <summary>
@@ -24,6 +27,17 @@ namespace MqttToolsMVVM.ViewModels.Base
             field = value;
             OnPropertyChanged(PropertyName);
             return true;
-        }    
+        }
+        private bool _dispoced;
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        protected virtual void Dispose(bool Disposing)
+        {
+            if (!Disposing || _dispoced) return;
+            _dispoced = true;  
+        }
     }
 }
