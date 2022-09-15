@@ -1,10 +1,41 @@
 ﻿<Window x:Class="MqttToolsMVVM.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MqttToolsMVVM"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-   
+        xmlns:vm="clr-namespace:MqttToolsMVVM.ViewModels"       
+        xmlns:fa="http://schemas.fontawesome.com/icons/"
+        
+        Title="MainWindow" Height="450" Width="800" WindowStyle="None">
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+    
+        <TabControl TabStripPlacement="Left">
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Padding" Value="4" />
+                    <Setter Property="HeaderTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <ContentPresenter Content="{TemplateBinding Content}">
+                                    <ContentPresenter.LayoutTransform>
+                                        <RotateTransform Angle="0" />
+                                    </ContentPresenter.LayoutTransform>
+                                </ContentPresenter>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+        <TabItem>
+           
+        </TabItem>
+            <TabItem Header="Tab Item 2" />
+            <TabItem Header="Tab Item 3" />
+            <TabItem Header="Tab Item 4" />
+        </TabControl>
+
+    
 </Window>
