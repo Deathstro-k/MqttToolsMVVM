@@ -6,36 +6,68 @@
         xmlns:local="clr-namespace:MqttToolsMVVM"
         xmlns:vm="clr-namespace:MqttToolsMVVM.ViewModels"       
         xmlns:fa="http://schemas.fontawesome.com/icons/"
-        
+        ResizeMode="NoResize"        
         Title="MainWindow" Height="450" Width="800" WindowStyle="None">
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
-    
-        <TabControl TabStripPlacement="Left">
+    <DockPanel>        
+        <TabControl TabStripPlacement="Left"
+                Background="DarkGray">
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Padding" Value="4" />
+                    <Setter Property="Padding" Value="4" />                    
                     <Setter Property="HeaderTemplate">
                         <Setter.Value>
                             <DataTemplate>
                                 <ContentPresenter Content="{TemplateBinding Content}">
                                     <ContentPresenter.LayoutTransform>
-                                        <RotateTransform Angle="0" />
-                                    </ContentPresenter.LayoutTransform>
+                                        <RotateTransform Angle="0" />                                        
+                                    </ContentPresenter.LayoutTransform>                                    
                                 </ContentPresenter>
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>
                 </Style>
             </TabControl.Resources>
-        <TabItem>
-           
-        </TabItem>
-            <TabItem Header="Tab Item 2" />
-            <TabItem Header="Tab Item 3" />
-            <TabItem Header="Tab Item 4" />
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Vertical">
+                        <fa:ImageAwesome Icon="Solid_Cloud"
+                                     Foreground="Purple"
+                                     Height="30"
+                                     Width="30"/>
+                        <TextBlock Text="Server" VerticalAlignment="Bottom"/>
+                    </StackPanel>
+                </TabItem.Header>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Vertical">
+                        <fa:ImageAwesome Icon="Solid_Microchip"
+                                     Foreground="Purple"
+                                     Height="30"
+                                     Width="30"/>
+                        <TextBlock Text="Client" VerticalAlignment="Bottom"/>
+                    </StackPanel>
+                </TabItem.Header>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Vertical">
+                        <fa:ImageAwesome Icon="Solid_Database"
+                                     Foreground="Purple"
+                                     Height="30"
+                                     Width="30"/>
+                        <TextBlock Text="Database" VerticalAlignment="Bottom"/>
+                    </StackPanel>
+                </TabItem.Header>
+            </TabItem>
+
         </TabControl>
+    </DockPanel>
+   
+    
 
     
 </Window>
