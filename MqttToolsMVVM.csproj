@@ -64,6 +64,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -91,8 +92,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\ApplicationContext.cs" />
-    <Compile Include="Infrastructure\Commands\Base\Command.cs" />
-    <Compile Include="Infrastructure\Commands\LambdaCommand.cs" />
+    <Compile Include="Infrastructure\Commands\AsyncCommand.cs" />
+    <Compile Include="Infrastructure\Commands\Base\AsyncCommandBase.cs" />
+    <Compile Include="Infrastructure\Commands\Base\CommandBase.cs" />
+    <Compile Include="Infrastructure\Commands\Command.cs" />
     <Compile Include="Models\MqttHandlers.cs" />
     <Compile Include="Models\MqttServerModel.cs" />
     <Compile Include="ViewModels\Base\ViewModel.cs" />

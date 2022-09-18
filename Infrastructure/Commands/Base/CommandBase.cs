@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace MqttToolsMVVM.Infrastructure.Commands.Base
 {
-    internal abstract class Command : ICommand
+    internal abstract class CommandBase : ICommand
     {
         public event EventHandler CanExecuteChanged
         {

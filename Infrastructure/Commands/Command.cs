@@ -3,13 +3,13 @@ using System;
 
 namespace MqttToolsMVVM.Infrastructure.Commands
 {
-    internal class LambdaCommand : Command
+    internal class Command : CommandBase
     {
 
         private Action<object> _Execute;
 
         private Func<object, bool> _CanExecute;
-        public LambdaCommand(Action<object> Execute, Func<object, bool> CanExecute = null) 
+        public Command(Action<object> Execute, Func<object, bool> CanExecute = null) 
         {
             _Execute = Execute ?? throw new ArgumentNullException(nameof(Execute));
             _CanExecute = CanExecute;

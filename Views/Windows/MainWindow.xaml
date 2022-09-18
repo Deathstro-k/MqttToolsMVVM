@@ -70,7 +70,7 @@
 
         <TabItem 
             x:Name="TabItem1" Style="{DynamicResource TabItemStyle}" Margin="0,0,0,0">
-            
+           
             <TabItem.Header>
                 <StackPanel 
                     
@@ -108,12 +108,14 @@
                                    VerticalAlignment="Top"
                                    HorizontalAlignment="Left"
                                    FontSize="25"/>
-                        <ComboBox materialDesign:HintAssist.Hint="Выберите IP"
+                        <ComboBox 
+                                  materialDesign:HintAssist.Hint="Выберите IP"
                                   Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                                   Margin="0,0,0,0"
                                   Background="{DynamicResource LeftBackground}"
-                                  Padding="0" Height="28">
-
+                                  Padding="0" Height="28"
+                                  SelectedValue="{Binding SelectedIp}">
+                            
                             <ComboBoxItem Content="{Binding LocalIp}"
                                           ToolTip="Ваш локальный IP-адрес"></ComboBoxItem>
                             <ComboBoxItem Content="{Binding PublicIp}"
@@ -121,14 +123,15 @@
                             
                         </ComboBox>
                         <TextBox materialDesign:HintAssist.Hint="Введите порт"
-                                 Text="{Binding Port}"
+                                 Text="{Binding Port,UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>                        
                         <Button HorizontalAlignment="Center"                                
                                 Padding="0"
                                 Margin="0,20,0,0"
                                 Background= "{x:Null}" 
                                 BorderBrush= "{x:Null}"
-                                Cursor="Hand">
+                                Cursor="Hand"
+                                Command="{Binding StartMqttServerCommand}">
                         <Border Height="30" Width="30" CornerRadius="15" Padding="0" Background="#FF2C2B3E"
                                     >
                             
@@ -138,6 +141,7 @@
                                              Foreground="{DynamicResource TextColor}"/>
                             </Border>
                         </Button>
+                        <TextBlock Text="{Binding SelectedIp}"></TextBlock>
                         
                     </StackPanel>
                     
@@ -219,6 +223,8 @@
                                />
                 </StackPanel>
             </TabItem.Header>
+            
         </TabItem>
     </TabControl>
+ 
 </Window>

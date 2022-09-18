@@ -3,26 +3,24 @@ using MQTTnet.Server;
 using MqttToolsMVVM.Infrastructure.Commands;
 using MqttToolsMVVM.Models;
 using MqttToolsMVVM.ViewModels.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Net;
-using System.Net.Sockets;
+using MqttToolsMVVM.Infrastructure.Commands.Base;
+using System.Windows.Controls;
+
 namespace MqttToolsMVVM.ViewModels
 {
-    internal class MainWindowViewModel: ViewModel
+    internal sealed class MainWindowViewModel: ViewModel
     {
         #region Поля и Свойства
         public static MqttServerModel mqttServerCreator = new MqttServerModel();
         private string _localip;
         private string _publicip;
-        
+        private ListBoxItem _selectedip;
         private string _port="1883";
+
 
         public string LocalIp
         {
@@ -40,7 +38,14 @@ namespace MqttToolsMVVM.ViewModels
             }
             set => Set(ref _publicip, value);
         }
-
+        public ListBoxItem SelectedIp
+        {
+            get
+            {
+                return _selectedip;
+            }
+            set => Set(ref _selectedip, value);
+        }
         public string Port
         {
             get
@@ -62,33 +67,28 @@ namespace MqttToolsMVVM.ViewModels
         }
         #endregion
         #region Запуск сервера
-        public ICommand StartMqttServerCommand { get; }
+        public IAsyncCommand StartMqttServerCommand { get; private set; }
 
-        private bool CanStartMqttServetCommandExecuted(object p)
+        private bool CanStartMqttServetCommandExecuted() => (SelectedIp != null && Port!=null) ? true : false;
+
+        private async Task OnStartMqttServetCommandExecute()
         {
-            if (p != null) return true;
-            else return false;  
-        }
-        
 
-        private async void OnStartMqttServetCommandExecute(object p) 
-        {   
-            
             var optionsBuilder = new MqttServerOptionsBuilder()
-                .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(LocalIp))
-                .WithDefaultEndpointPort(int.Parse(Port))
-                .WithConnectionValidator(MqttHandlers.onNewConnection)
-                .WithApplicationMessageInterceptor(MqttHandlers.onNewMessage);
-            var mqttServer = new MqttFactory().CreateMqttServer();
-            await mqttServer.StartAsync(optionsBuilder.Build());
+                .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(SelectedIp.Content.ToString()))
+                .WithDefaultEndpointPort(int.Parse(Port));
+                var mqttServer = new MqttFactory().CreateMqttServer();
+                await mqttServer.StartAsync(optionsBuilder.Build());
+            
+           
         }
        
         #endregion
         #endregion
         public MainWindowViewModel()
         {
-            CloseApplicationCommand = new LambdaCommand(OnCloseApplicationCommandExecute, CanCloseApplicationCommandExecuted);
-            StartMqttServerCommand = new LambdaCommand(OnStartMqttServetCommandExecute, CanStartMqttServetCommandExecuted);
+            CloseApplicationCommand = new Command(OnCloseApplicationCommandExecute, CanCloseApplicationCommandExecuted);
+            StartMqttServerCommand = new AsyncCommand(OnStartMqttServetCommandExecute);
         }
             
     }
