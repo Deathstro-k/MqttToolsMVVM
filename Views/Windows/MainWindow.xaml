@@ -24,8 +24,7 @@
       
          
         <Style x:Key="TabItemStyle" TargetType="TabItem">
-            <Setter Property="Foreground" Value="{DynamicResource TextColor}"></Setter>
-           
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"></Setter>           
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
@@ -115,8 +114,10 @@
                                   Background="{DynamicResource LeftBackground}"
                                   Padding="0" Height="28">
 
-                            <ComboBoxItem Content="{Binding LocalIp}"></ComboBoxItem>
-                            <ComboBoxItem Content="192.168.0.7"></ComboBoxItem>
+                            <ComboBoxItem Content="{Binding LocalIp}"
+                                          ToolTip="Ваш локальный IP-адрес"></ComboBoxItem>
+                            <ComboBoxItem Content="{Binding PublicIp}"
+                                          ToolTip="Ваш публичный IP-адрес"></ComboBoxItem>
                             
                         </ComboBox>
                         <TextBox materialDesign:HintAssist.Hint="Введите порт"

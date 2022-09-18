@@ -11,16 +11,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-
+using System.Net;
+using System.Net.Sockets;
 namespace MqttToolsMVVM.ViewModels
 {
     internal class MainWindowViewModel: ViewModel
     {
-
+        #region Поля и Свойства
         public static MqttServerModel mqttServerCreator = new MqttServerModel();
         private string _localip;
-        private string _remoteip;   
-        private string _port;
+        private string _publicip;
+        
+        private string _port="1883";
+
         public string LocalIp
         {
             get 
@@ -29,15 +32,24 @@ namespace MqttToolsMVVM.ViewModels
             }
             set => Set(ref _localip, value);
         } 
+        public string PublicIp
+        {
+            get
+            {
+                return MqttServerModel.GetPublicIpAddressIpv4();
+            }
+            set => Set(ref _publicip, value);
+        }
+
         public string Port
         {
             get
             {
-                return mqttServerCreator.Port.ToString();
+                return _port;
             }
             set => Set(ref _port, value);
         }
-
+        #endregion
         #region Команды
         #region Закрытие приложения
         public ICommand CloseApplicationCommand { get; }
@@ -49,7 +61,7 @@ namespace MqttToolsMVVM.ViewModels
             Application.Current.Shutdown();
         }
         #endregion
-        #region
+        #region Запуск сервера
         public ICommand StartMqttServerCommand { get; }
 
         private bool CanStartMqttServetCommandExecuted(object p)
@@ -63,8 +75,8 @@ namespace MqttToolsMVVM.ViewModels
         {   
             
             var optionsBuilder = new MqttServerOptionsBuilder()
-                .WithDefaultEndpointBoundIPAddress(mqttServerCreator.Ip)
-                .WithDefaultEndpointPort(mqttServerCreator.Port)
+                .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(LocalIp))
+                .WithDefaultEndpointPort(int.Parse(Port))
                 .WithConnectionValidator(MqttHandlers.onNewConnection)
                 .WithApplicationMessageInterceptor(MqttHandlers.onNewMessage);
             var mqttServer = new MqttFactory().CreateMqttServer();

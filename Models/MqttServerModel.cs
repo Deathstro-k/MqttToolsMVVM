@@ -9,20 +9,7 @@ using System.Threading.Tasks;
 namespace MqttToolsMVVM.Models
 {
     internal class MqttServerModel
-    {
-        
-        private int _port;
-
-        public IPAddress Ip { get; set; }
-        public int Port
-        {
-            get => _port;
-            set
-            {
-                if (_port >= 0 && _port <= 65536) _port = value;
-            }
-        }
-
+    {     
 
         public static string GetLocalIPAddressIPv4()
         {
