@@ -15,7 +15,7 @@ namespace MqttToolsMVVM.ViewModels
     internal sealed class MainWindowViewModel: ViewModel
     {
         #region Поля и Свойства
-        public static MqttServerModel mqttServerCreator = new MqttServerModel();
+        
         private string _localip;
         private string _publicip;
         private string _selectedip;
