@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MQTTnet.Server;
+using MQTTnet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,8 +11,8 @@ using System.Threading.Tasks;
 namespace MqttToolsMVVM.Models
 {
     internal class MqttServerModel
-    {     
-
+    {   
+        
         public static string GetLocalIPAddressIPv4()
         {
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))

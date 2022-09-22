@@ -127,7 +127,7 @@
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>                        
                         <Button HorizontalAlignment="Center"                                
                                 Padding="0"
-                                Margin="0,20,0,0"
+                                Margin="0,20,40,0"
                                 Background= "{x:Null}" 
                                 BorderBrush= "{x:Null}"
                                 Cursor="Hand"
@@ -135,7 +135,23 @@
                         <Border Height="30" Width="30" CornerRadius="15" Padding="0" Background="#FF2C2B3E"
                                     >
                             
-                            <fa:ImageAwesome Icon="Regular_PlayCircle"
+                            <fa:ImageAwesome Icon="Solid_PlayCircle"
+                                             Width="30"
+                                             Height="30"                                             
+                                             Foreground="{DynamicResource TextColor}"/>
+                            </Border>
+                        </Button>
+                        <Button HorizontalAlignment="Center"                                
+                                Padding="0"
+                                Margin="0,-32,-40,0"
+                                Background= "{x:Null}" 
+                                BorderBrush= "{x:Null}"
+                                Cursor="Hand"
+                                Command="{Binding StopMqttServerCommand}">
+                            <Border Height="30" Width="30" CornerRadius="15" Padding="0" Background="#FF2C2B3E"
+                                    >
+
+                                <fa:ImageAwesome Icon="Solid_StopCircle"
                                              Width="30"
                                              Height="30"                                             
                                              Foreground="{DynamicResource TextColor}"/>

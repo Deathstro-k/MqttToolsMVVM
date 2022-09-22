@@ -72,6 +72,7 @@ namespace MqttToolsMVVM.ViewModels
             }
             set => Set(ref _statusTooltip, value);
         }
+        IMqttServer mqttServer;
         #endregion
         #region Команды
         #region Закрытие приложения
@@ -86,24 +87,32 @@ namespace MqttToolsMVVM.ViewModels
         #endregion
         #region Запуск сервера
         public IAsyncCommand StartMqttServerCommand { get; private set; }
-
-        private async Task OnStartMqttServetCommandExecute()
+       
+        private async Task OnStartMqttServerCommandExecute()
         {
             Status = "/Resourses/Images/ServerOnline.png";
             StatusTooltip = "Сервер Online";
             var optionsBuilder = new MqttServerOptionsBuilder()
                 .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(SelectedIp.Content.ToString()))
                 .WithDefaultEndpointPort(int.Parse(Port));
-            var mqttServer = new MqttFactory().CreateMqttServer();
+            mqttServer = new MqttFactory().CreateMqttServer();
             await mqttServer.StartAsync(optionsBuilder.Build());
         }
-       
+
         #endregion
+        public IAsyncCommand StopMqttServerCommand { get; private set; }
+        private async Task OnStopMqttServerCommandExecute()
+        {
+            Status = "/Resourses/Images/ServerOnline.png";
+            StatusTooltip = "Сервер Online";           
+            await mqttServer.StopAsync();
+        }
         #endregion
         public MainWindowViewModel()
         {
             CloseApplicationCommand = new Command(OnCloseApplicationCommandExecute, CanCloseApplicationCommandExecuted);
-            StartMqttServerCommand = new AsyncCommand(OnStartMqttServetCommandExecute);
+            StartMqttServerCommand = new AsyncCommand(OnStartMqttServerCommandExecute);
+            StopMqttServerCommand = new AsyncCommand(OnStopMqttServerCommandExecute);
         }
             
     }
