@@ -143,9 +143,18 @@
                         </Button>
                         <TextBlock Text="{Binding SelectedIp}"></TextBlock>
                         
-                    </StackPanel>
-                    
+                    </StackPanel>                    
                 </Border>
+                <Image
+                       Source="{Binding Status}"
+                       ToolTip="{Binding StatusTooltip}"
+                           Width="30"
+                           Height="30" Margin="330,92,285,328"            
+                            >
+                    <Image.Effect>
+                        <DropShadowEffect BlurRadius="10"></DropShadowEffect>
+                    </Image.Effect>
+                </Image>
                 <Border HorizontalAlignment="Right"
                         Height="450"
                         Width="200"

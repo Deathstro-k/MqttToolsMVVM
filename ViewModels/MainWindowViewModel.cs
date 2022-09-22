@@ -20,6 +20,8 @@ namespace MqttToolsMVVM.ViewModels
         private string _publicip;
         private ListBoxItem _selectedip;
         private string _port="1883";
+        private string _status = "/Resourses/Images/ServerOffline.png";
+        private string _statusTooltip = "Сервер Offline";
 
 
         public string LocalIp
@@ -54,6 +56,22 @@ namespace MqttToolsMVVM.ViewModels
             }
             set => Set(ref _port, value);
         }
+        public string Status
+        {
+            get
+            {
+                return _status;
+            }
+            set => Set(ref _status, value);
+        }
+        public string StatusTooltip
+        {
+            get
+            {
+                return _statusTooltip;
+            }
+            set => Set(ref _statusTooltip, value);
+        }
         #endregion
         #region Команды
         #region Закрытие приложения
@@ -69,18 +87,15 @@ namespace MqttToolsMVVM.ViewModels
         #region Запуск сервера
         public IAsyncCommand StartMqttServerCommand { get; private set; }
 
-        private bool CanStartMqttServetCommandExecuted() => (SelectedIp != null && Port!=null) ? true : false;
-
         private async Task OnStartMqttServetCommandExecute()
         {
-
+            Status = "/Resourses/Images/ServerOnline.png";
+            StatusTooltip = "Сервер Online";
             var optionsBuilder = new MqttServerOptionsBuilder()
                 .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(SelectedIp.Content.ToString()))
                 .WithDefaultEndpointPort(int.Parse(Port));
-                var mqttServer = new MqttFactory().CreateMqttServer();
-                await mqttServer.StartAsync(optionsBuilder.Build());
-            
-           
+            var mqttServer = new MqttFactory().CreateMqttServer();
+            await mqttServer.StartAsync(optionsBuilder.Build());
         }
        
         #endregion
