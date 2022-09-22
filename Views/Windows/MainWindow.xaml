@@ -114,6 +114,7 @@
                                   Margin="0,0,0,0"
                                   Background="{DynamicResource LeftBackground}"
                                   Padding="0" Height="28"
+                                  SelectedValuePath="Content"
                                   SelectedValue="{Binding SelectedIp}">
                             
                             <ComboBoxItem Content="{Binding LocalIp}"

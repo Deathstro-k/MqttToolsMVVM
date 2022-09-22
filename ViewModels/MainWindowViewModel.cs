@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using MqttToolsMVVM.Infrastructure.Commands.Base;
-using System.Windows.Controls;
+
 
 namespace MqttToolsMVVM.ViewModels
 {
@@ -18,7 +18,7 @@ namespace MqttToolsMVVM.ViewModels
         public static MqttServerModel mqttServerCreator = new MqttServerModel();
         private string _localip;
         private string _publicip;
-        private ListBoxItem _selectedip;
+        private string _selectedip;
         private string _port="1883";
         private string _status = "/Resourses/Images/ServerOffline.png";
         private string _statusTooltip = "Сервер Offline";
@@ -40,7 +40,7 @@ namespace MqttToolsMVVM.ViewModels
             }
             set => Set(ref _publicip, value);
         }
-        public ListBoxItem SelectedIp
+        public string SelectedIp
         {
             get
             {
@@ -72,7 +72,7 @@ namespace MqttToolsMVVM.ViewModels
             }
             set => Set(ref _statusTooltip, value);
         }
-        IMqttServer mqttServer;
+        IMqttServer mqttServer = new MqttFactory().CreateMqttServer();
         #endregion
         #region Команды
         #region Закрытие приложения
@@ -93,20 +93,25 @@ namespace MqttToolsMVVM.ViewModels
             Status = "/Resourses/Images/ServerOnline.png";
             StatusTooltip = "Сервер Online";
             var optionsBuilder = new MqttServerOptionsBuilder()
-                .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(SelectedIp.Content.ToString()))
+                .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(SelectedIp.ToString()))
                 .WithDefaultEndpointPort(int.Parse(Port));
-            mqttServer = new MqttFactory().CreateMqttServer();
-            await mqttServer.StartAsync(optionsBuilder.Build());
+            try
+            {
+                await mqttServer.StartAsync(optionsBuilder.Build());
+            }
+            catch(System.InvalidOperationException) { }
         }
 
         #endregion
+        #region Остановка сервера
         public IAsyncCommand StopMqttServerCommand { get; private set; }
         private async Task OnStopMqttServerCommandExecute()
         {
-            Status = "/Resourses/Images/ServerOnline.png";
-            StatusTooltip = "Сервер Online";           
+            Status = "/Resourses/Images/ServerOffline.png";
+            StatusTooltip = "Сервер Offline";           
             await mqttServer.StopAsync();
         }
+        #endregion
         #endregion
         public MainWindowViewModel()
         {
