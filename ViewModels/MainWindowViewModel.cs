@@ -3,11 +3,11 @@ using MQTTnet.Server;
 using MqttToolsMVVM.Infrastructure.Commands;
 using MqttToolsMVVM.Models;
 using MqttToolsMVVM.ViewModels.Base;
-using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using MqttToolsMVVM.Infrastructure.Commands.Base;
+
 
 
 namespace MqttToolsMVVM.ViewModels
@@ -72,7 +72,7 @@ namespace MqttToolsMVVM.ViewModels
             }
             set => Set(ref _statusTooltip, value);
         }
-        IMqttServer mqttServer = new MqttFactory().CreateMqttServer();
+        
         #endregion
         #region Команды
         #region Закрытие приложения
@@ -92,14 +92,8 @@ namespace MqttToolsMVVM.ViewModels
         {
             Status = "/Resourses/Images/ServerOnline.png";
             StatusTooltip = "Сервер Online";
-            var optionsBuilder = new MqttServerOptionsBuilder()
-                .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(SelectedIp.ToString()))
-                .WithDefaultEndpointPort(int.Parse(Port));
-            try
-            {
-                await mqttServer.StartAsync(optionsBuilder.Build());
-            }
-            catch(System.InvalidOperationException) { }
+
+            await MqttServerModel.StartMqttServer(SelectedIp.ToString(),Port);
         }
 
         #endregion
@@ -108,8 +102,8 @@ namespace MqttToolsMVVM.ViewModels
         private async Task OnStopMqttServerCommandExecute()
         {
             Status = "/Resourses/Images/ServerOffline.png";
-            StatusTooltip = "Сервер Offline";           
-            await mqttServer.StopAsync();
+            StatusTooltip = "Сервер Offline";
+            await MqttServerModel.StopMqttServer();
         }
         #endregion
         #endregion
