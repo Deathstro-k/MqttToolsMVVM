@@ -23,8 +23,7 @@ namespace MqttToolsMVVM
     {
         public MainWindow()
         {
-            InitializeComponent();
-            
+            InitializeComponent();            
         }
     }
 }

@@ -89,7 +89,6 @@
     <Compile Include="Infrastructure\Commands\Base\AsyncCommandBase.cs" />
     <Compile Include="Infrastructure\Commands\Base\CommandBase.cs" />
     <Compile Include="Infrastructure\Commands\Command.cs" />
-    <Compile Include="Models\MqttHandlers.cs" />
     <Compile Include="Models\MqttServerModel.cs" />
     <Compile Include="ViewModels\Base\ViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

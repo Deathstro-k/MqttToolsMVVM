@@ -5,6 +5,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Diagnostics;
+using MqttToolsMVVM.ViewModels;
+using System.Collections.Generic;
+using System.Windows.Threading;
+using System.ServiceModel.Channels;
 
 namespace MqttToolsMVVM.Models
 {
@@ -12,15 +17,17 @@ namespace MqttToolsMVVM.Models
     {
         private readonly static IMqttServer mqttServer = new MqttFactory().CreateMqttServer();
         private string _infoConnection;
-
+        public MainWindowViewModel mainWindowView = new MainWindowViewModel();
         public static Action<MqttConnectionValidatorContext> onNewConnection;
 
-        public static async Task StartMqttServer(string ipString, string portString)
+        
+        public async Task StartMqttServer(string ipString, string portString)
         {
-            var optionsBuilder = new MqttServerOptionsBuilder()
-                   .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(ipString))
-                   .WithDefaultEndpointPort(int.Parse(portString));
-                   
+           var optionsBuilder = new MqttServerOptionsBuilder()
+                       .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(ipString))
+                       .WithDefaultEndpointPort(int.Parse(portString))
+                       .WithConnectionValidator(onNewConnection += OnNewConnection);
+
             try
             {
                await mqttServer.StartAsync(optionsBuilder.Build());
@@ -28,8 +35,9 @@ namespace MqttToolsMVVM.Models
             catch (InvalidOperationException) { }
 
         }
-       
-        private void GetConnectionInformation(MqttConnectionValidatorContext context)
+      
+        
+        public string GetConnectionInformation(MqttConnectionValidatorContext context)
         {
             _infoConnection = $"Подключючился пользователь:\n " +
                     $"ID: {context.ClientId}\n" +
@@ -37,23 +45,21 @@ namespace MqttToolsMVVM.Models
                     $"Password: {context.Password} \n" +
                     $"Endpoint: {context.Endpoint} \n" +
                     $"IsSecureConnection: {context.IsSecureConnection}\n" +
-                    $"----------------------------------------------------------------------------";          
-
+                    $"----------------------------------------------------------------------------";
+            return _infoConnection;
         }
         private void OnNewConnection(MqttConnectionValidatorContext context)
         {
-            GetConnectionInformation(context);
-            MessageBox.Show("Хуй");
-        }
 
-        public void OnEnable()
-        {
-            onNewConnection += OnNewConnection;            
-        }
+           // MainWindowViewModel.Items.Add(new Item(GetConnectionInformation(context)));
        
-    
+            
+        }
 
-    public static async Task StopMqttServer()
+     
+       
+
+        public static async Task StopMqttServer()
         {
             await mqttServer.StopAsync();           
 
@@ -73,5 +79,35 @@ namespace MqttToolsMVVM.Models
             string publicIp = new WebClient().DownloadString("https://api.ipify.org");
             return publicIp;
         }
+
     }
-} 
+    public class Item
+    {
+        public Item(string message)
+        {
+            
+            Message = message;
+        }
+        public string Message { get; set; }
+    }
+
+    public class ItemHandler
+    {
+        public List<Item> Items { get; private set; }
+        public ItemHandler()
+        {
+            Items = new List<Item>();
+        }
+
+        
+
+        public void Add(Item item)
+        {   
+            
+            Items.Add(item);          
+
+        }
+
+
+    }
+    } 

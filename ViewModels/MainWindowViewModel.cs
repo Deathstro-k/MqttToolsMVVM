@@ -1,14 +1,11 @@
-﻿using MQTTnet;
-using MQTTnet.Server;
-using MqttToolsMVVM.Infrastructure.Commands;
+﻿using MqttToolsMVVM.Infrastructure.Commands;
 using MqttToolsMVVM.Models;
 using MqttToolsMVVM.ViewModels.Base;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using MqttToolsMVVM.Infrastructure.Commands.Base;
-
-
+using System.Collections.Generic;
 
 namespace MqttToolsMVVM.ViewModels
 {
@@ -22,7 +19,12 @@ namespace MqttToolsMVVM.ViewModels
         private string _port="1883";
         private string _status = "/Resourses/Images/ServerOffline.png";
         private string _statusTooltip = "Сервер Offline";
-
+        private string _logMessages;
+        private static ItemHandler itemHandler = new ItemHandler();
+        public static List<Item> Items
+        {
+            get { return itemHandler.Items; }
+        }
 
         public string LocalIp
         {
@@ -72,6 +74,16 @@ namespace MqttToolsMVVM.ViewModels
             }
             set => Set(ref _statusTooltip, value);
         }
+        public string LogMessages 
+        { 
+            get
+            {
+                return _logMessages;
+            }
+            set => Set(ref _logMessages, value);
+        }
+       
+
         
         #endregion
         #region Команды
@@ -90,10 +102,11 @@ namespace MqttToolsMVVM.ViewModels
        
         private async Task OnStartMqttServerCommandExecute()
         {
+            MqttServerModel serverModel = new MqttServerModel();
             Status = "/Resourses/Images/ServerOnline.png";
             StatusTooltip = "Сервер Online";
 
-            await MqttServerModel.StartMqttServer(SelectedIp.ToString(),Port);
+            await serverModel.StartMqttServer(SelectedIp.ToString(),Port);
         }
 
         #endregion
@@ -105,14 +118,17 @@ namespace MqttToolsMVVM.ViewModels
             StatusTooltip = "Сервер Offline";
             await MqttServerModel.StopMqttServer();
         }
+       
         #endregion
         #endregion
         public MainWindowViewModel()
         {
+            
             CloseApplicationCommand = new Command(OnCloseApplicationCommandExecute, CanCloseApplicationCommandExecuted);
             StartMqttServerCommand = new AsyncCommand(OnStartMqttServerCommandExecute);
             StopMqttServerCommand = new AsyncCommand(OnStopMqttServerCommandExecute);
         }
-            
+        
+
     }
 }
