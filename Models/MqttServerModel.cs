@@ -10,6 +10,9 @@ using MqttToolsMVVM.ViewModels;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using System.ServiceModel.Channels;
+using System.Collections.ObjectModel;
+using System.Text;
+using System.Windows.Controls;
 
 namespace MqttToolsMVVM.Models
 {
@@ -17,52 +20,51 @@ namespace MqttToolsMVVM.Models
     {
         private readonly static IMqttServer mqttServer = new MqttFactory().CreateMqttServer();
         private string _infoConnection;
-        public MainWindowViewModel mainWindowView = new MainWindowViewModel();
-        public static Action<MqttConnectionValidatorContext> onNewConnection;
+        private string _infoMessage;   
+        public Action<MqttConnectionValidatorContext> onNewConnection;
+        public Action<MqttApplicationMessageInterceptorContext> onNewMessage;
 
-        
-        public async Task StartMqttServer(string ipString, string portString)
+
+
+        public void GetConnectionInformation(MqttConnectionValidatorContext context)
         {
-           var optionsBuilder = new MqttServerOptionsBuilder()
-                       .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(ipString))
-                       .WithDefaultEndpointPort(int.Parse(portString))
-                       .WithConnectionValidator(onNewConnection += OnNewConnection);
-
-            try
-            {
-               await mqttServer.StartAsync(optionsBuilder.Build());
-            }
-            catch (InvalidOperationException) { }
-
-        }
-      
-        
-        public string GetConnectionInformation(MqttConnectionValidatorContext context)
-        {
-            _infoConnection = $"Подключючился пользователь:\n " +
+            _infoConnection = $"Подключился пользователь:\n " +
                     $"ID: {context.ClientId}\n" +
                     $"UserName: {context.Username}\n" +
                     $"Password: {context.Password} \n" +
                     $"Endpoint: {context.Endpoint} \n" +
                     $"IsSecureConnection: {context.IsSecureConnection}\n" +
                     $"----------------------------------------------------------------------------";
-            return _infoConnection;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                MainWindowViewModel.LogMessages.Add(new LogMessage(_infoConnection));
+            });          
         }
-        private void OnNewConnection(MqttConnectionValidatorContext context)
+        private void GetMessageInformation(MqttApplicationMessageInterceptorContext context)
+        {           
+            var payload = context.ApplicationMessage?.Payload == null ? null : Encoding.UTF8.GetString(context.ApplicationMessage?.Payload);
+            _infoMessage = $"Отправлено сообщения пользователем (ID: {context.ClientId})\n" +
+                $"На топик: {context.ApplicationMessage?.Topic}\n" +
+                $"Сообщение: {payload}\n" +
+                $"QoS: {context.ApplicationMessage?.QualityOfServiceLevel}\n" +
+                $"Retain: {context.ApplicationMessage?.Retain}\n" +
+                $"----------------------------------------------------------------------------";
+            Application.Current.Dispatcher .Invoke(() =>
+            {
+                MainWindowViewModel.LogMessages.Add(new LogMessage(_infoMessage));
+            });
+        }
+        public void OnNewConnection(MqttConnectionValidatorContext context)
         {
-
-           // MainWindowViewModel.Items.Add(new Item(GetConnectionInformation(context)));
-       
-            
+            GetConnectionInformation(context);            
         }
-
-     
-       
-
+        public void OnNewMessage(MqttApplicationMessageInterceptorContext context)
+        {
+            GetMessageInformation(context);
+        }
         public static async Task StopMqttServer()
         {
-            await mqttServer.StopAsync();           
-
+            await mqttServer.StopAsync();
         }
         public static string GetLocalIPAddressIPv4()
         {
@@ -81,9 +83,9 @@ namespace MqttToolsMVVM.Models
         }
 
     }
-    public class Item
+    public class LogMessage
     {
-        public Item(string message)
+        public LogMessage(string message)
         {
             
             Message = message;
@@ -93,15 +95,13 @@ namespace MqttToolsMVVM.Models
 
     public class ItemHandler
     {
-        public List<Item> Items { get; private set; }
+        public ObservableCollection<LogMessage> Items { get; private set; }
         public ItemHandler()
         {
-            Items = new List<Item>();
-        }
+            Items = new ObservableCollection<LogMessage>();
+        }      
 
-        
-
-        public void Add(Item item)
+        public void Add(LogMessage item)
         {   
             
             Items.Add(item);          

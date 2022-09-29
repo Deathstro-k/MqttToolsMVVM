@@ -6,6 +6,11 @@ using System.Windows;
 using System.Windows.Input;
 using MqttToolsMVVM.Infrastructure.Commands.Base;
 using System.Collections.Generic;
+using MQTTnet.Server;
+using System.Net;
+using System;
+using MQTTnet;
+using System.Collections.ObjectModel;
 
 namespace MqttToolsMVVM.ViewModels
 {
@@ -19,9 +24,10 @@ namespace MqttToolsMVVM.ViewModels
         private string _port="1883";
         private string _status = "/Resourses/Images/ServerOffline.png";
         private string _statusTooltip = "Сервер Offline";
-        private string _logMessages;
-        private static ItemHandler itemHandler = new ItemHandler();
-        public static List<Item> Items
+       
+        private static readonly ItemHandler itemHandler = new ItemHandler();
+        private readonly static IMqttServer mqttServer = new MqttFactory().CreateMqttServer();
+        public static ObservableCollection<LogMessage> LogMessages
         {
             get { return itemHandler.Items; }
         }
@@ -74,15 +80,7 @@ namespace MqttToolsMVVM.ViewModels
             }
             set => Set(ref _statusTooltip, value);
         }
-        public string LogMessages 
-        { 
-            get
-            {
-                return _logMessages;
-            }
-            set => Set(ref _logMessages, value);
-        }
-       
+      
 
         
         #endregion
@@ -105,8 +103,17 @@ namespace MqttToolsMVVM.ViewModels
             MqttServerModel serverModel = new MqttServerModel();
             Status = "/Resourses/Images/ServerOnline.png";
             StatusTooltip = "Сервер Online";
+            var optionsBuilder = new MqttServerOptionsBuilder()
+                       .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(SelectedIp))
+                       .WithDefaultEndpointPort(int.Parse(Port))
+                       .WithConnectionValidator(serverModel.onNewConnection += serverModel.OnNewConnection)
+                       .WithApplicationMessageInterceptor(serverModel.onNewMessage += serverModel.OnNewMessage);
+            try
+            {
+                await mqttServer.StartAsync(optionsBuilder.Build());
+            }
+            catch (InvalidOperationException) { }
 
-            await serverModel.StartMqttServer(SelectedIp.ToString(),Port);
         }
 
         #endregion

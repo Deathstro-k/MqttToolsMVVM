@@ -203,14 +203,10 @@
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="20"></DropShadowEffect>
                     </Border.Effect>
-                <ListView ItemsSource="{Binding Items}">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Message" Width="320" DisplayMemberBinding="{Binding Message}" />
-
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                    <DataGrid ItemsSource="{Binding LogMessages}" AutoGenerateColumns="True">
+                       
+                       
+                    </DataGrid>
                 </Border>
             </Grid>
         </TabItem>
