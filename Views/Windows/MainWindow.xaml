@@ -7,6 +7,8 @@
         xmlns:vm="clr-namespace:MqttToolsMVVM.ViewModels"     
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:fa="http://schemas.fontawesome.com/icons/"
+        xmlns:Behaviors="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:services="clr-namespace:MqttToolsMVVM.Services"
         ResizeMode="NoResize"        
         Title="MainWindow" 
         Height="450"
@@ -172,10 +174,27 @@
                         <DropShadowEffect BlurRadius="10"></DropShadowEffect>
                     </Image.Effect>
                 </Image>
+                <Button HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                                Padding="0"
+                                Margin="0"
+                                Background= "{x:Null}" 
+                                BorderBrush= "{x:Null}"
+                                Cursor="Hand"
+                                Command="{Binding StartMqttServerCommand}">
+                    <Border Height="30" Width="30" CornerRadius="15" Padding="0" Background="#FF2C2B3E">
+
+                        <fa:ImageAwesome Icon="Solid_WindowClose"
+                                             Width="30"
+                                             Height="30"                                             
+                                             Foreground="{DynamicResource TextColor}"/>
+                    </Border>
+                </Button>
                 <Border HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         Height="200" 
                         Width="200"
+                        Margin="0,30,0,0"
                         Background="{DynamicResource LeftBackground}">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="20"></DropShadowEffect>
@@ -197,15 +216,20 @@
                 <Border Background="{DynamicResource LeftBackground}"
                         VerticalAlignment="Bottom"
                         HorizontalAlignment="Left"
-                        Margin="52,0,0,0"
+                        Margin="22,0,0,0"
                         Height="150"
-                        Width="300">
+                        Width="400">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="20"></DropShadowEffect>
                     </Border.Effect>
-                    <DataGrid ItemsSource="{Binding LogMessages}" AutoGenerateColumns="True">
-                       
-                       
+                    <DataGrid ItemsSource="{Binding LogMessages}"
+                              AutoGenerateColumns="True"
+                              Background="{DynamicResource LeftBackground}"
+                              Foreground="{DynamicResource TextColor}"
+                              >
+                        <Behaviors:Interaction.Behaviors>
+                            <services:ScrollToEndBehavior/>
+                        </Behaviors:Interaction.Behaviors>
                     </DataGrid>
                 </Border>
             </Grid>

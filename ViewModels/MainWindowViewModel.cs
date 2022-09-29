@@ -135,7 +135,11 @@ namespace MqttToolsMVVM.ViewModels
             StartMqttServerCommand = new AsyncCommand(OnStartMqttServerCommandExecute);
             StopMqttServerCommand = new AsyncCommand(OnStopMqttServerCommandExecute);
         }
-        
+
+        private bool autoScroll;
+
+        public bool AutoScroll { get => autoScroll; set => Set(ref autoScroll, value); }
+
 
     }
 }
