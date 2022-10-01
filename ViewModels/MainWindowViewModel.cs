@@ -26,9 +26,8 @@ namespace MqttToolsMVVM.ViewModels
         private bool _useConnectionHandler;
         private bool _useMessageHandler;
         private bool _autoScroll;
-        private bool _permissionToEdit = true;
-        private bool _permissionToStart = true;
-        private bool _permissionToStop = false;
+        private bool _permissionToManipulation = true;
+       
 
 
         private static readonly ItemHandler itemHandler = new ItemHandler();        
@@ -118,40 +117,18 @@ namespace MqttToolsMVVM.ViewModels
                 _autoScroll = Set(ref _autoScroll, value);
             }
         } 
-        public bool PermissionToEdit
+        public bool PermissionToManipulation
         {
             get
             {
-                return _permissionToEdit;
+                return _permissionToManipulation;
             }
             set
             {
-                Set(ref _permissionToEdit, value);
+                Set(ref _permissionToManipulation, value);
             }
         }
-        public bool PermissionToStart
-        {
-            get
-            {
-                return _permissionToStart;
-            }
-            set
-            {
-                Set(ref _permissionToStart, value);
-            }
-        }
-        public bool PermissionToStop
-        {
-            get
-            {
-                return _permissionToStop;
-            }
-            set
-            {
-                Set(ref _permissionToStop, value);
-            }
-        }
-
+       
         #endregion
         #region Команды
         #region Закрытие приложения
@@ -174,9 +151,7 @@ namespace MqttToolsMVVM.ViewModels
             
             Status = "/Resourses/Images/ServerOnline.png";
             StatusTooltip = "Сервер Online";
-            PermissionToEdit = false;
-            PermissionToStart = false;
-            PermissionToStop = true;
+            PermissionToManipulation = false;
             try
             {
                 await MqttServerModel.mqttServer.StartAsync(serverModel.optionsBuilder.Build());
@@ -192,9 +167,7 @@ namespace MqttToolsMVVM.ViewModels
         {   
             Status = "/Resourses/Images/ServerOffline.png";
             StatusTooltip = "Сервер Offline";
-            PermissionToEdit = true;
-            PermissionToStart = true;
-            PermissionToStop = false;
+            PermissionToManipulation = true;
             await MqttServerModel.StopMqttServer();
         }
        

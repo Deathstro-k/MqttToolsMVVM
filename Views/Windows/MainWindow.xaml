@@ -9,6 +9,7 @@
         xmlns:fa="http://schemas.fontawesome.com/icons/"
         xmlns:Behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:services="clr-namespace:MqttToolsMVVM.Services"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         ResizeMode="NoResize"        
         Title="MainWindow" 
         Height="450"
@@ -136,7 +137,7 @@
                                 BorderBrush= "{x:Null}"
                                 Cursor="Hand"
                                 Command="{Binding StartMqttServerCommand}"
-                                IsEnabled="{Binding PermissionToStart}">
+                                IsEnabled="{c:Binding PermissionToManipulation}">
                         <Border Height="30" Width="30" CornerRadius="15" Padding="0" Background="#FF2C2B3E"
                                     >
                             
@@ -153,7 +154,7 @@
                                 BorderBrush= "{x:Null}"
                                 Cursor="Hand"
                                 Command="{Binding StopMqttServerCommand}"
-                                IsEnabled="{Binding PermissionToStop}">
+                                IsEnabled="{c:Binding !PermissionToManipulation}">
                             <Border Height="30" Width="30" CornerRadius="15" Padding="0" Background="#FF2C2B3E"
                                     >
 
@@ -210,12 +211,13 @@
                         <CheckBox Content="Обработчик соединений"
                                   HorizontalAlignment="Left"
                                   IsChecked="{Binding UseConnectionHandler}"
-                                  IsEnabled="{Binding PermissionToEdit}"
+                                  IsEnabled="{Binding PermissionToManipulation}"
                                   />
                         <CheckBox Content="Обработчик сообщений"
                                   HorizontalAlignment="Left"
                                   IsChecked="{Binding UseMessageHandler}"
-                                  IsEnabled="{Binding PermissionToEdit}"/>
+                                  IsEnabled="{Binding PermissionToManipulation}"
+                                  />
                         
 
 
