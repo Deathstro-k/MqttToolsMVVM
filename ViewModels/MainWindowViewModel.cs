@@ -10,6 +10,8 @@ using System;
 using MQTTnet;
 using System.Collections.ObjectModel;
 using System.Net;
+using System.Linq;
+using System.Net.NetworkInformation;
 
 namespace MqttToolsMVVM.ViewModels
 {
@@ -20,7 +22,7 @@ namespace MqttToolsMVVM.ViewModels
         private string _localip;
         private string _publicip;
         private string _selectedip;
-        private string _port="1883";
+        private string _port ="1883";
         private string _status = "/Resourses/Images/ServerOffline.png";
         private string _statusTooltip = "Сервер Offline";
         private bool _useConnectionHandler;
@@ -140,6 +142,29 @@ namespace MqttToolsMVVM.ViewModels
         {
             Application.Current.Shutdown();
         }
+        #region Случайный порт
+        public ICommand RandomFreePortCommand { get; }  
+
+        private void OnRandomFreePortCommandExecute(object p) 
+        {
+            int port=0;
+            port = (port > 0) ? port : new Random().Next(1, 65535);
+            while (!IsFree(port))
+            {
+                port += 1;
+            }
+            bool IsFree(int prt)
+            {
+                IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
+                IPEndPoint[] listeners = properties.GetActiveTcpListeners();
+                int[] openPorts = listeners.Select(item => item.Port).ToArray<int>();
+                return openPorts.All(openPort => openPort != prt);
+            }
+            Port = port.ToString();
+        }
+        private bool CanRandomFreePortCommandExecuted(object p) => true;
+        #endregion
+       
         #endregion
         #region Запуск сервера
         public IAsyncCommand StartMqttServerCommand { get; set; }
@@ -170,14 +195,18 @@ namespace MqttToolsMVVM.ViewModels
             PermissionToManipulation = true;
             await MqttServerModel.StopMqttServer();
         }
+
        
         #endregion
         #endregion
         public MainWindowViewModel()
         {            
             CloseApplicationCommand = new Command(OnCloseApplicationCommandExecute, CanCloseApplicationCommandExecuted);
+            RandomFreePortCommand = new Command(OnRandomFreePortCommandExecute, CanRandomFreePortCommandExecuted);
             StartMqttServerCommand = new AsyncCommand(OnStartMqttServerCommandExecute);
             StopMqttServerCommand = new AsyncCommand(OnStopMqttServerCommandExecute);
+           
+
         }
 
         

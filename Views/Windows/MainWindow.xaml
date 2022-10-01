@@ -12,20 +12,20 @@
         xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         ResizeMode="NoResize"        
         Title="MainWindow" 
-        Height="450"
-        Width="800"
+        Height="800"
+        Width="1000"
         WindowStyle="None" 
-        Background="#FF333247">
+        Background="#FF333247"
+        >
+    
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
     <Window.Resources>
+        
         <SolidColorBrush x:Key="TextColor" Color="#FFEAECEA"/>
         <SolidColorBrush x:Key="LeftBackground" Color="#FF333247"/>
-        <SolidColorBrush x:Key="Background" Color="#FF2C2B3E"/>
-
-      
-         
+        <SolidColorBrush x:Key="Background" Color="#FF2C2B3E"/>             
         <Style x:Key="TabItemStyle" TargetType="TabItem">
             <Setter Property="Foreground" Value="{DynamicResource TextColor}"></Setter>           
             <Setter Property="Template">
@@ -101,7 +101,7 @@
                         Height="200"
                         Background="{DynamicResource LeftBackground}"
                         CornerRadius="5"
-                        Margin="56,30,289,220"
+                        Margin="83,74,462,526"
                         Padding="15"
                         >
                     <Border.Effect>
@@ -128,8 +128,8 @@
                             
                         </ComboBox>
                         <TextBox materialDesign:HintAssist.Hint="Введите порт"
-                                 Text="{Binding Port,UpdateSourceTrigger=PropertyChanged}"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>                        
+                                 Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
                         <Button HorizontalAlignment="Center"                                
                                 Padding="0"
                                 Margin="0,20,40,0"
@@ -137,7 +137,8 @@
                                 BorderBrush= "{x:Null}"
                                 Cursor="Hand"
                                 Command="{Binding StartMqttServerCommand}"
-                                IsEnabled="{c:Binding PermissionToManipulation}">
+                                IsEnabled="{c:Binding PermissionToManipulation}"
+                                ToolTip="Запустить сервер">
                         <Border Height="30" Width="30" CornerRadius="15" Padding="0" Background="#FF2C2B3E"
                                     >
                             
@@ -161,7 +162,8 @@
                                 <fa:ImageAwesome Icon="Solid_StopCircle"
                                              Width="30"
                                              Height="30"                                             
-                                             Foreground="{DynamicResource TextColor}"/>
+                                             Foreground="{DynamicResource TextColor}"
+                                             ToolTip="Остановить сервер"/>
                             </Border>
                         </Button>
                         <TextBlock Text="{Binding SelectedIp}"></TextBlock>
@@ -172,7 +174,7 @@
                        Source="{Binding Status}"
                        ToolTip="{Binding StatusTooltip}"
                            Width="30"
-                           Height="30" Margin="330,0,285,328"            
+                           Height="30" Margin="368,59,447,711"            
                             >
                     <Image.Effect>
                         <DropShadowEffect BlurRadius="10"></DropShadowEffect>
@@ -198,8 +200,8 @@
                         VerticalAlignment="Top"
                         Height="200" 
                         Width="200"
-                        Margin="0,30,0,0"
-                        CornerRadius="5"
+                        Margin="0,16,47,0"
+                        CornerRadius="5"                        
                         Background="{DynamicResource LeftBackground}">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="20"></DropShadowEffect>
@@ -209,27 +211,61 @@
                             FontSize="25"
                             HorizontalAlignment="Center">Настройки</TextBlock>
                         <CheckBox Content="Обработчик соединений"
-                                  HorizontalAlignment="Left"
+                                  
                                   IsChecked="{Binding UseConnectionHandler}"
-                                  IsEnabled="{Binding PermissionToManipulation}"
+                                  IsEnabled="{Binding PermissionToManipulation}" Margin="5,10,0,0"
                                   />
                         <CheckBox Content="Обработчик сообщений"
-                                  HorizontalAlignment="Left"
                                   IsChecked="{Binding UseMessageHandler}"
-                                  IsEnabled="{Binding PermissionToManipulation}"
+                                  IsEnabled="{Binding PermissionToManipulation}" Margin="5,10,0,0"
                                   />
+                    </StackPanel>                    
+                </Border>
+                <Border HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Height="200" 
+                        Width="200"
+                        Margin="0,235,47,0"
+                        CornerRadius="5"
                         
-
-
+                        Background="{DynamicResource LeftBackground}">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="20"></DropShadowEffect>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock
+                                FontSize="25"
+                                HorizontalAlignment="Center">Инструменты</TextBlock>
+                        <Button 
+                                Height="30"
+                                Width="30"
+                                Padding="0"                                
+                                Background= "{x:Null}" 
+                                BorderBrush= "{x:Null}"
+                                Cursor="Hand"                             
+                                ToolTip="Случайный свободный порт"
+                                HorizontalAlignment="Left"
+                                Margin="10,10,0,0"
+                                Command="{Binding RandomFreePortCommand}"
+                                IsEnabled="{Binding PermissionToManipulation}">
+                            <Border Height="30"
+                                    Width="30"
+                                    CornerRadius="15"
+                                    Padding="0" 
+                                    Background="#FF2C2B3E">
+                                <fa:ImageAwesome Icon="Solid_QuestionCircle"
+                                                Width="30"
+                                                Height="30"                                             
+                                                Foreground="{DynamicResource TextColor}"/>
+                            </Border>
+                        </Button>
                     </StackPanel>
-                    
                 </Border>
                 <Border Background="{DynamicResource LeftBackground}"
                         VerticalAlignment="Bottom"
-                        HorizontalAlignment="Left"
-                        Margin="22,0,0,0"
-                        Height="150"
-                        Width="400"
+                        HorizontalAlignment="Center"                        
+                        Height="350"
+                        Width="750"
                         CornerRadius="5">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="20"></DropShadowEffect>

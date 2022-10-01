@@ -8,7 +8,7 @@ using System.Windows;
 using MqttToolsMVVM.ViewModels;
 using System.Collections.ObjectModel;
 using System.Text;
-
+using System.Threading;
 
 namespace MqttToolsMVVM.Models
 {
@@ -23,7 +23,6 @@ namespace MqttToolsMVVM.Models
         public static IMqttServer mqttServer = new MqttFactory().CreateMqttServer();
         public MqttServerModel(string ip, string port, bool useConnectionHandler, bool useMessageHandler)
         {
-            //mqttServer = new MqttFactory().CreateMqttServer();
             onNewConnection -= OnNewConnection;
             onNewMessage -= OnNewMessage;
             if (useConnectionHandler && useMessageHandler)
@@ -56,30 +55,31 @@ namespace MqttToolsMVVM.Models
             }
         }
 
-        public void GetConnectionInformation(MqttConnectionValidatorContext context)
+        private void GetConnectionInformation(MqttConnectionValidatorContext context)
         {
-            _infoConnection = $"Подключился пользователь:\n " +
-                    $"ID: {context.ClientId}\n" +
+            _infoConnection =
+                    $"UserID: {context.ClientId}\n" +
                     $"UserName: {context.Username}\n" +
                     $"Password: {context.Password} \n" +
                     $"Endpoint: {context.Endpoint} \n" +
-                    $"IsSecureConnection: {context.IsSecureConnection}\n";
-            Application.Current.Dispatcher.Invoke(() =>
+                    $"IsSecureConnection: {context.IsSecureConnection}";
+            Application.Current.Dispatcher?.Invoke(() =>
             {
-                MainWindowViewModel.LogMessages.Add(new LogMessage(_infoConnection));
+                MainWindowViewModel.LogMessages.Add(new LogMessage("Подключение пользователя",_infoConnection));
             });          
         }
         private void GetMessageInformation(MqttApplicationMessageInterceptorContext context)
         {           
             var payload = context.ApplicationMessage?.Payload == null ? null : Encoding.UTF8.GetString(context.ApplicationMessage?.Payload);
-            _infoMessage = $"Отправлено сообщения пользователем (ID: {context.ClientId})\n" +
-                $"На топик: {context.ApplicationMessage?.Topic}\n" +
+            _infoMessage = 
+                $"UserID: {context.ClientId}\n" +
+                $"Топик: {context.ApplicationMessage?.Topic}\n" +
                 $"Сообщение: {payload}\n" +
                 $"QoS: {context.ApplicationMessage?.QualityOfServiceLevel}\n" +
-                $"Retain: {context.ApplicationMessage?.Retain}\n";
-            Application.Current.Dispatcher .Invoke(() =>
+                $"Retain: {context.ApplicationMessage?.Retain}";
+            Application.Current.Dispatcher?.Invoke(() =>
             {
-                MainWindowViewModel.LogMessages.Add(new LogMessage(_infoMessage));
+                MainWindowViewModel.LogMessages.Add(new LogMessage("Сообщение",_infoMessage));
             });
         }
         public void OnNewConnection(MqttConnectionValidatorContext context)
@@ -109,15 +109,20 @@ namespace MqttToolsMVVM.Models
             string publicIp = new WebClient().DownloadString("https://api.ipify.org");
             return publicIp;
         }
-
     }
     public class LogMessage
     {
-        public LogMessage(string message)
+        public LogMessage(string type, string message)
         {
-            
+            Id = Interlocked.Increment(ref nextId);
+            Type = type;
             Message = message;
         }
+        static int nextId;
+        public int Id { get; private set; }                          
+        
+        public DateTime TimeStamp { get; private set; } = DateTime.Now;
+        public string Type { get; set; }
         public string Message { get; set; }
     }
 
