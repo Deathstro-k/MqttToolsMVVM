@@ -5,12 +5,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using MqttToolsMVVM.Infrastructure.Commands.Base;
-using System.Collections.Generic;
 using MQTTnet.Server;
-using System.Net;
 using System;
 using MQTTnet;
 using System.Collections.ObjectModel;
+using System.Net;
 
 namespace MqttToolsMVVM.ViewModels
 {
@@ -24,9 +23,15 @@ namespace MqttToolsMVVM.ViewModels
         private string _port="1883";
         private string _status = "/Resourses/Images/ServerOffline.png";
         private string _statusTooltip = "Сервер Offline";
-       
-        private static readonly ItemHandler itemHandler = new ItemHandler();
-        private readonly static IMqttServer mqttServer = new MqttFactory().CreateMqttServer();
+        private bool _useConnectionHandler;
+        private bool _useMessageHandler;
+        private bool _autoScroll;
+        private bool _permissionToEdit = true;
+        private bool _permissionToStart = true;
+        private bool _permissionToStop = false;
+
+
+        private static readonly ItemHandler itemHandler = new ItemHandler();        
         public static ObservableCollection<LogMessage> LogMessages
         {
             get { return itemHandler.Items; }
@@ -80,9 +85,73 @@ namespace MqttToolsMVVM.ViewModels
             }
             set => Set(ref _statusTooltip, value);
         }
-      
+        public bool UseConnectionHandler
+        {
+            get
+            {
+                return _useConnectionHandler;
+            }
+            set
+            {
+                Set(ref _useConnectionHandler, value);
+            }
+        }
+        public bool UseMessageHandler
+        {
+            get
+            {
+                return _useMessageHandler;
+            }
+            set
+            {
+                Set(ref _useMessageHandler, value);
+            }
+        }              
+        public bool AutoScroll
+        {
+            get
+            {
+                return _autoScroll;
+            }
+            set
+            {
+                _autoScroll = Set(ref _autoScroll, value);
+            }
+        } 
+        public bool PermissionToEdit
+        {
+            get
+            {
+                return _permissionToEdit;
+            }
+            set
+            {
+                Set(ref _permissionToEdit, value);
+            }
+        }
+        public bool PermissionToStart
+        {
+            get
+            {
+                return _permissionToStart;
+            }
+            set
+            {
+                Set(ref _permissionToStart, value);
+            }
+        }
+        public bool PermissionToStop
+        {
+            get
+            {
+                return _permissionToStop;
+            }
+            set
+            {
+                Set(ref _permissionToStop, value);
+            }
+        }
 
-        
         #endregion
         #region Команды
         #region Закрытие приложения
@@ -96,21 +165,21 @@ namespace MqttToolsMVVM.ViewModels
         }
         #endregion
         #region Запуск сервера
-        public IAsyncCommand StartMqttServerCommand { get; private set; }
+        public IAsyncCommand StartMqttServerCommand { get; set; }
        
         private async Task OnStartMqttServerCommandExecute()
         {
-            MqttServerModel serverModel = new MqttServerModel();
+            
+            MqttServerModel serverModel = new MqttServerModel(SelectedIp,Port,UseConnectionHandler,UseMessageHandler);
+            
             Status = "/Resourses/Images/ServerOnline.png";
             StatusTooltip = "Сервер Online";
-            var optionsBuilder = new MqttServerOptionsBuilder()
-                       .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(SelectedIp))
-                       .WithDefaultEndpointPort(int.Parse(Port))
-                       .WithConnectionValidator(serverModel.onNewConnection += serverModel.OnNewConnection)
-                       .WithApplicationMessageInterceptor(serverModel.onNewMessage += serverModel.OnNewMessage);
+            PermissionToEdit = false;
+            PermissionToStart = false;
+            PermissionToStop = true;
             try
             {
-                await mqttServer.StartAsync(optionsBuilder.Build());
+                await MqttServerModel.mqttServer.StartAsync(serverModel.optionsBuilder.Build());
             }
             catch (InvalidOperationException) { }
 
@@ -120,25 +189,25 @@ namespace MqttToolsMVVM.ViewModels
         #region Остановка сервера
         public IAsyncCommand StopMqttServerCommand { get; private set; }
         private async Task OnStopMqttServerCommandExecute()
-        {
+        {   
             Status = "/Resourses/Images/ServerOffline.png";
             StatusTooltip = "Сервер Offline";
+            PermissionToEdit = true;
+            PermissionToStart = true;
+            PermissionToStop = false;
             await MqttServerModel.StopMqttServer();
         }
        
         #endregion
         #endregion
         public MainWindowViewModel()
-        {
-            
+        {            
             CloseApplicationCommand = new Command(OnCloseApplicationCommandExecute, CanCloseApplicationCommandExecuted);
             StartMqttServerCommand = new AsyncCommand(OnStartMqttServerCommandExecute);
             StopMqttServerCommand = new AsyncCommand(OnStopMqttServerCommandExecute);
         }
 
-        private bool autoScroll;
-
-        public bool AutoScroll { get => autoScroll; set => Set(ref autoScroll, value); }
+        
 
 
     }

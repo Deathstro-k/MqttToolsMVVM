@@ -99,7 +99,8 @@
                 <Border Width="300"
                         Height="200"
                         Background="{DynamicResource LeftBackground}"
-                        CornerRadius="5" Margin="52,0,293,147"
+                        CornerRadius="5"
+                        Margin="56,30,289,220"
                         Padding="15"
                         >
                     <Border.Effect>
@@ -134,7 +135,8 @@
                                 Background= "{x:Null}" 
                                 BorderBrush= "{x:Null}"
                                 Cursor="Hand"
-                                Command="{Binding StartMqttServerCommand}">
+                                Command="{Binding StartMqttServerCommand}"
+                                IsEnabled="{Binding PermissionToStart}">
                         <Border Height="30" Width="30" CornerRadius="15" Padding="0" Background="#FF2C2B3E"
                                     >
                             
@@ -150,7 +152,8 @@
                                 Background= "{x:Null}" 
                                 BorderBrush= "{x:Null}"
                                 Cursor="Hand"
-                                Command="{Binding StopMqttServerCommand}">
+                                Command="{Binding StopMqttServerCommand}"
+                                IsEnabled="{Binding PermissionToStop}">
                             <Border Height="30" Width="30" CornerRadius="15" Padding="0" Background="#FF2C2B3E"
                                     >
 
@@ -181,7 +184,7 @@
                                 Background= "{x:Null}" 
                                 BorderBrush= "{x:Null}"
                                 Cursor="Hand"
-                                Command="{Binding StartMqttServerCommand}">
+                                Command="{Binding CloseApplicationCommand}">
                     <Border Height="30" Width="30" CornerRadius="15" Padding="0" Background="#FF2C2B3E">
 
                         <fa:ImageAwesome Icon="Solid_WindowClose"
@@ -195,6 +198,7 @@
                         Height="200" 
                         Width="200"
                         Margin="0,30,0,0"
+                        CornerRadius="5"
                         Background="{DynamicResource LeftBackground}">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="20"></DropShadowEffect>
@@ -204,9 +208,14 @@
                             FontSize="25"
                             HorizontalAlignment="Center">Настройки</TextBlock>
                         <CheckBox Content="Обработчик соединений"
-                                  HorizontalAlignment="Left"/>
+                                  HorizontalAlignment="Left"
+                                  IsChecked="{Binding UseConnectionHandler}"
+                                  IsEnabled="{Binding PermissionToEdit}"
+                                  />
                         <CheckBox Content="Обработчик сообщений"
-                                  HorizontalAlignment="Left"/>
+                                  HorizontalAlignment="Left"
+                                  IsChecked="{Binding UseMessageHandler}"
+                                  IsEnabled="{Binding PermissionToEdit}"/>
                         
 
 
@@ -218,7 +227,8 @@
                         HorizontalAlignment="Left"
                         Margin="22,0,0,0"
                         Height="150"
-                        Width="400">
+                        Width="400"
+                        CornerRadius="5">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="20"></DropShadowEffect>
                     </Border.Effect>

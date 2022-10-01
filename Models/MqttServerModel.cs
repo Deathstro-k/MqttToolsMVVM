@@ -5,26 +5,56 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Diagnostics;
 using MqttToolsMVVM.ViewModels;
-using System.Collections.Generic;
-using System.Windows.Threading;
-using System.ServiceModel.Channels;
 using System.Collections.ObjectModel;
 using System.Text;
-using System.Windows.Controls;
+
 
 namespace MqttToolsMVVM.Models
 {
     internal class MqttServerModel
     {
-        private readonly static IMqttServer mqttServer = new MqttFactory().CreateMqttServer();
+       
         private string _infoConnection;
         private string _infoMessage;   
         public Action<MqttConnectionValidatorContext> onNewConnection;
         public Action<MqttApplicationMessageInterceptorContext> onNewMessage;
-
-
+        public MqttServerOptionsBuilder optionsBuilder;
+        public static IMqttServer mqttServer = new MqttFactory().CreateMqttServer();
+        public MqttServerModel(string ip, string port, bool useConnectionHandler, bool useMessageHandler)
+        {
+            //mqttServer = new MqttFactory().CreateMqttServer();
+            onNewConnection -= OnNewConnection;
+            onNewMessage -= OnNewMessage;
+            if (useConnectionHandler && useMessageHandler)
+            {
+                optionsBuilder = new MqttServerOptionsBuilder()
+                                  .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(ip))
+                                  .WithDefaultEndpointPort(int.Parse(port))
+                                  .WithConnectionValidator(onNewConnection += OnNewConnection)
+                                  .WithApplicationMessageInterceptor(onNewMessage += OnNewMessage);
+            }
+            else if (useConnectionHandler && !useMessageHandler)
+            {
+                optionsBuilder = new MqttServerOptionsBuilder()
+                                  .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(ip))
+                                  .WithDefaultEndpointPort(int.Parse(port))
+                                  .WithConnectionValidator(onNewConnection += OnNewConnection);
+            }
+            else if (!useConnectionHandler && useMessageHandler)
+            {
+                optionsBuilder = new MqttServerOptionsBuilder()
+                                  .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(ip))
+                                  .WithDefaultEndpointPort(int.Parse(port))
+                                  .WithApplicationMessageInterceptor(onNewMessage += OnNewMessage);
+            }
+            else
+            {
+                optionsBuilder = new MqttServerOptionsBuilder()
+                                 .WithDefaultEndpointBoundIPAddress(IPAddress.Parse(ip))
+                                 .WithDefaultEndpointPort(int.Parse(port));
+            }
+        }
 
         public void GetConnectionInformation(MqttConnectionValidatorContext context)
         {
@@ -33,8 +63,7 @@ namespace MqttToolsMVVM.Models
                     $"UserName: {context.Username}\n" +
                     $"Password: {context.Password} \n" +
                     $"Endpoint: {context.Endpoint} \n" +
-                    $"IsSecureConnection: {context.IsSecureConnection}\n" +
-                    $"----------------------------------------------------------------------------";
+                    $"IsSecureConnection: {context.IsSecureConnection}\n";
             Application.Current.Dispatcher.Invoke(() =>
             {
                 MainWindowViewModel.LogMessages.Add(new LogMessage(_infoConnection));
@@ -47,8 +76,7 @@ namespace MqttToolsMVVM.Models
                 $"На топик: {context.ApplicationMessage?.Topic}\n" +
                 $"Сообщение: {payload}\n" +
                 $"QoS: {context.ApplicationMessage?.QualityOfServiceLevel}\n" +
-                $"Retain: {context.ApplicationMessage?.Retain}\n" +
-                $"----------------------------------------------------------------------------";
+                $"Retain: {context.ApplicationMessage?.Retain}\n";
             Application.Current.Dispatcher .Invoke(() =>
             {
                 MainWindowViewModel.LogMessages.Add(new LogMessage(_infoMessage));
